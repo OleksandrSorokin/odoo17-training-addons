@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="hr_hospital_disease_flu" model="hr.hospital.disease">
+        <field name="name">Flu</field>
+    </record>
+
+    <record id="hr_hospital_disease_pneumonia" model="hr.hospital.disease">
+        <field name="name">Pneumonia</field>
+    </record>
+
+    <record id="hr_hospital_disease_migraine" model="hr.hospital.disease">
+        <field name="name">Migraine</field>
+    </record>
+</odoo>
