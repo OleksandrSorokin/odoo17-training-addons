@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_hospital_diagnosis_report_view_tree" model="ir.ui.view">
+        <field name="name">hr.hospital.diagnosis.report.tree</field>
+        <field name="model">hr.hospital.diagnosis</field>
+        <field name="arch" type="xml">
+            <tree string="Diagnoses">
+                <field name="disease_id"/>
+                <field name="visit_date"/>
+                <field name="doctor_id"/>
+                <field name="patient_id"/>
+                <field name="treatment_description"/>
+                <field name="is_approved"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="hr_hospital_diagnosis_report_view_form" model="ir.ui.view">
+        <field name="name">hr.hospital.diagnosis.report.form</field>
+        <field name="model">hr.hospital.diagnosis</field>
+        <field name="arch" type="xml">
+            <form string="Diagnosis">
+                <sheet>
+                    <group>
+                        <field name="disease_id"/>
+                        <field name="visit_id" readonly="1"/>
+                        <field name="visit_date" readonly="1"/>
+                        <field name="doctor_id" readonly="1"/>
+                        <field name="patient_id" readonly="1"/>
+                        <field name="treatment_description"/>
+                        <field name="is_approved" readonly="1"/>
+                        <field name="approved_by_id" readonly="1"/>
+                        <field name="approved_at" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_hospital_diagnosis_report_view_search" model="ir.ui.view">
+        <field name="name">hr.hospital.diagnosis.report.search</field>
+        <field name="model">hr.hospital.diagnosis</field>
+        <field name="arch" type="xml">
+            <search string="Diagnosis Report">
+                <field name="disease_id"/>
+                <field name="doctor_id"/>
+                <field name="patient_id"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_disease" string="Disease"
+                            context="{'group_by': 'disease_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

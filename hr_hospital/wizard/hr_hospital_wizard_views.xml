@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_hospital_change_doctor_wizard_view_form" model="ir.ui.view">
+        <field name="name">hr.hospital.change.doctor.wizard.form</field>
+        <field name="model">hr.hospital.change.doctor.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Change Personal Doctor">
+                <group>
+                    <field name="patient_ids" widget="many2many_tags" readonly="1" force_save="1"/>
+                    <field name="doctor_id" required="1"/>
+                </group>
+                <footer>
+                    <button name="action_apply" type="object"
+                            string="Change Doctor" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_hospital_diagnosis_report_wizard_view_form" model="ir.ui.view">
+        <field name="name">hr.hospital.diagnosis.report.wizard.form</field>
+        <field name="model">hr.hospital.diagnosis.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Diagnosis Report by Disease">
+                <group>
+                    <field name="doctor_ids" widget="many2many_tags"/>
+                    <field name="disease_ids" widget="many2many_tags"/>
+                </group>
+                <group>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </group>
+                <footer>
+                    <button name="action_show_report" type="object"
+                            string="Show Diagnoses" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Available in Action for selected patients (list only). -->
+    <record id="hr_hospital_change_doctor_server_action" model="ir.actions.server">
+        <field name="name">Change Personal Doctor</field>
+        <field name="model_id" ref="model_hr_hospital_patient"/>
+        <field name="binding_model_id" ref="model_hr_hospital_patient"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[
+patient_ids = records.ids if records else env.context.get('active_ids', [])
+if not patient_ids:
+    raise UserError('Select one or more patients in the list.')
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Change Personal Doctor',
+    'res_model': 'hr.hospital.change.doctor.wizard',
+    'view_mode': 'form',
+    'view_id': env.ref('hr_hospital.hr_hospital_change_doctor_wizard_view_form').id,
+    'target': 'new',
+    'context': {'default_patient_ids': [(6, 0, patient_ids)]},
+}
+        ]]></field>
+    </record>
+
+    <!-- Available in Print for both doctor list and doctor form. -->
+    <record id="hr_hospital_diagnosis_report_server_action" model="ir.actions.server">
+        <field name="name">Diagnosis Report by Disease</field>
+        <field name="model_id" ref="model_hr_hospital_doctor"/>
+        <field name="binding_model_id" ref="model_hr_hospital_doctor"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="binding_type">report</field>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[
+doctor_ids = records.ids if records else env.context.get('active_ids', [])
+if not doctor_ids and env.context.get('active_id'):
+    doctor_ids = [env.context['active_id']]
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Diagnosis Report by Disease',
+    'res_model': 'hr.hospital.diagnosis.report.wizard',
+    'view_mode': 'form',
+    'view_id': env.ref('hr_hospital.hr_hospital_diagnosis_report_wizard_view_form').id,
+    'target': 'new',
+    'context': {'default_doctor_ids': [(6, 0, doctor_ids)]},
+}
+        ]]></field>
+    </record>
+</odoo>
