@@ -6,7 +6,10 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
+                <field name="birth_date"/>
+                <field name="age"/>
                 <field name="doctor_id"/>
+                <field name="phone"/>
             </tree>
         </field>
     </record>
@@ -17,9 +20,23 @@
         <field name="arch" type="xml">
             <form string="Patient">
                 <sheet>
+                    <field name="image_1920" widget="image"
+                           class="oe_avatar"/>
                     <group>
-                        <field name="name"/>
-                        <field name="doctor_id"/>
+                        <group string="Personal Information">
+                            <field name="name"/>
+                            <field name="first_name"/>
+                            <field name="last_name"/>
+                            <field name="gender"/>
+                            <field name="birth_date"/>
+                            <field name="age" readonly="1"/>
+                        </group>
+                        <group string="Contact Information">
+                            <field name="phone"/>
+                            <field name="doctor_id"/>
+                            <field name="contact_person_id"/>
+                            <field name="passport_data"/>
+                        </group>
                     </group>
                 </sheet>
             </form>

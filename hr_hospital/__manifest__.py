@@ -7,6 +7,7 @@
     "license": "LGPL-3",
     "depends": [
         "base",
+        "web_hierarchy",
     ],
     "data": [
         "security/ir.model.access.csv",
@@ -15,10 +16,14 @@
         "views/hr_hospital_patient_views.xml",
         "views/hr_hospital_disease_views.xml",
         "views/hr_hospital_visit_views.xml",
+        "views/hr_hospital_diagnosis_report_views.xml",
+        "wizard/hr_hospital_wizard_views.xml",
         "views/hr_hospital_menu.xml",
     ],
-    "demo": [
+        "demo": [
         "demo/hr_hospital_demo.xml",
+        "demo/hr_hospital_visit_demo.xml",
+        "demo/hr_hospital_disease_hierarchy_demo.xml",
     ],
     "application": True,
     "installable": True,
