@@ -1,5 +1,4 @@
-
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -15,19 +14,28 @@ class HrHospitalDoctor(models.Model):
             ("neurology", "Neurology"),
             ("pediatrics", "Pediatrics"),
         ],
-        string="Specialty",
     )
-
-    is_intern = fields.Boolean(
-        string="Intern",
-        default=False,
-    )
-
+    is_intern = fields.Boolean(string="Intern", default=False)
     mentor_id = fields.Many2one(
         comodel_name="hr.hospital.doctor",
         string="Mentor",
         domain=[("is_intern", "=", False)],
         ondelete="restrict",
+    )
+    intern_ids = fields.One2many(
+        comodel_name="hr.hospital.doctor",
+        inverse_name="mentor_id",
+        string="Interns",
+    )
+    mentor_phone = fields.Char(
+        related="mentor_id.phone",
+        string="Mentor Phone",
+        readonly=True,
+    )
+    mentor_specialty = fields.Selection(
+        related="mentor_id.specialty",
+        string="Mentor Specialty",
+        readonly=True,
     )
     user_id = fields.Many2one(
         comodel_name="res.users",
@@ -35,28 +43,40 @@ class HrHospitalDoctor(models.Model):
         ondelete="restrict",
         groups="base.group_system",
     )
+
     @api.constrains("is_intern", "mentor_id")
     def _check_mentor(self):
         for doctor in self:
             if doctor.mentor_id:
                 if not doctor.is_intern:
-                    raise ValidationError(
-                        "Only interns can have a mentor."
-                    )
-
+                    raise ValidationError(_("Only interns can have a mentor."))
                 if doctor.mentor_id == doctor:
                     raise ValidationError(
-                        "A doctor cannot be their own mentor."
+                        _("A doctor cannot be their own mentor.")
                     )
-
                 if doctor.mentor_id.is_intern:
-                    raise ValidationError(
-                        "An intern cannot be a mentor."
-                    )
+                    raise ValidationError(_("An intern cannot be a mentor."))
 
             if doctor.is_intern and self.search_count([
                 ("mentor_id", "=", doctor.id),
             ]):
                 raise ValidationError(
-                    "A mentor with assigned interns cannot become an intern."
+                    _(
+                        "A mentor with assigned interns cannot become "
+                        "an intern."
+                    )
                 )
+
+    def action_schedule_visit(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Schedule Visit",
+            "res_model": "hr.hospital.visit",
+            "view_mode": "form",
+            "view_id": self.env.ref(
+                "hr_hospital.hr_hospital_visit_view_form"
+            ).id,
+            "target": "new",
+            "context": {"default_doctor_id": self.id},
+        }

@@ -20,12 +20,12 @@ class HrHospitalDiagnosisReportWizard(models.TransientModel):
         string="Diseases (empty means all)",
     )
     date_from = fields.Date(
-        string="Date From",
+
         required=True,
         default=lambda self: fields.Date.context_today(self).replace(day=1),
     )
     date_to = fields.Date(
-        string="Date To",
+
         required=True,
         default=lambda self: self._default_date_to(),
     )
@@ -43,7 +43,9 @@ class HrHospitalDiagnosisReportWizard(models.TransientModel):
                 wizard.date_from and wizard.date_to
                 and wizard.date_from > wizard.date_to
             ):
-                raise ValidationError(_("Date From cannot be later than Date To."))
+                raise ValidationError(
+                    _("Date From cannot be later than Date To.")
+                )
 
     def action_show_report(self):
         self.ensure_one()
@@ -52,13 +54,16 @@ class HrHospitalDiagnosisReportWizard(models.TransientModel):
 
         tz = pytz.timezone(self.env.user.tz or "UTC")
         local_start = tz.localize(datetime.combine(self.date_from, time.min))
-        next_day = self.date_to + timedelta(days=1)
-        local_end = tz.localize(datetime.combine(next_day, time.min))
+        local_end = tz.localize(
+            datetime.combine(self.date_to + timedelta(days=1), time.min)
+        )
         utc_start = local_start.astimezone(pytz.UTC).replace(tzinfo=None)
         utc_end = local_end.astimezone(pytz.UTC).replace(tzinfo=None)
-
         domain = [
-            ("visit_id.visit_date", ">=", fields.Datetime.to_string(utc_start)),
+            (
+                "visit_id.visit_date", ">=",
+                fields.Datetime.to_string(utc_start),
+            ),
             ("visit_id.visit_date", "<", fields.Datetime.to_string(utc_end)),
         ]
         if self.doctor_ids:
@@ -66,8 +71,12 @@ class HrHospitalDiagnosisReportWizard(models.TransientModel):
         if self.disease_ids:
             domain.append(("disease_id", "in", self.disease_ids.ids))
 
-        list_view = self.env.ref("hr_hospital.hr_hospital_diagnosis_report_view_tree")
-        form_view = self.env.ref("hr_hospital.hr_hospital_diagnosis_report_view_form")
+        list_view = self.env.ref(
+            "hr_hospital.hr_hospital_diagnosis_report_view_tree"
+        )
+        form_view = self.env.ref(
+            "hr_hospital.hr_hospital_diagnosis_report_view_form"
+        )
         search_view = self.env.ref(
             "hr_hospital.hr_hospital_diagnosis_report_view_search"
         )
@@ -75,8 +84,13 @@ class HrHospitalDiagnosisReportWizard(models.TransientModel):
             "type": "ir.actions.act_window",
             "name": _("Diagnosis Report by Disease"),
             "res_model": "hr.hospital.diagnosis",
-            "view_mode": "tree,form",
-            "views": [(list_view.id, "tree"), (form_view.id, "form")],
+            "view_mode": "tree,form,pivot,graph",
+            "views": [
+                (list_view.id, "tree"),
+                (form_view.id, "form"),
+                (False, "pivot"),
+                (False, "graph"),
+            ],
             "search_view_id": search_view.id,
             "domain": domain,
             "context": {"search_default_group_by_disease": 1},

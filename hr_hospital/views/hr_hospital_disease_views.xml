@@ -10,7 +10,6 @@
             </tree>
         </field>
     </record>
-
     <record id="hr_hospital_disease_view_form" model="ir.ui.view">
         <field name="name">hr.hospital.disease.view.form</field>
         <field name="model">hr.hospital.disease</field>
@@ -38,26 +37,36 @@
         <field name="name">hr.hospital.disease.view.hierarchy</field>
         <field name="model">hr.hospital.disease</field>
         <field name="arch" type="xml">
-            <hierarchy parent_field="parent_id"
-                       child_field="child_ids"
-                       draggable="false">
+            <hierarchy parent_field="parent_id" child_field="child_ids" draggable="false">
                 <field name="parent_id" invisible="1"/>
                 <field name="child_ids" invisible="1"/>
                 <templates>
                     <t t-name="hierarchy-box">
                         <div class="o_hierarchy_node_header p-3">
-                            <strong>
-                                <field name="name"/>
-                            </strong>
+                            <strong><field name="name"/></strong>
                         </div>
                     </t>
                 </templates>
             </hierarchy>
         </field>
     </record>
+    <record id="hr_hospital_disease_view_search" model="ir.ui.view">
+        <field name="name">hr.hospital.disease.view.search</field>
+        <field name="model">hr.hospital.disease</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="parent_id"/>
+                <searchpanel>
+                    <field name="parent_id" string="Disease Category" select="one" hierarchize="1"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
     <record id="hr_hospital_disease_action" model="ir.actions.act_window">
         <field name="name">Diseases</field>
         <field name="res_model">hr.hospital.disease</field>
-        <field name="view_mode">hierarchy,tree,form</field>
+        <field name="view_mode">tree,hierarchy,form</field>
+        <field name="search_view_id" ref="hr_hospital_disease_view_search"/>
     </record>
 </odoo>

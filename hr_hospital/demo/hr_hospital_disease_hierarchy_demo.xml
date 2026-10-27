@@ -3,26 +3,21 @@
     <record id="disease_demo_respiratory" model="hr.hospital.disease">
         <field name="name">Respiratory Diseases</field>
     </record>
-
     <record id="disease_demo_bronchitis" model="hr.hospital.disease">
         <field name="name">Bronchitis</field>
         <field name="parent_id" ref="disease_demo_respiratory"/>
     </record>
-
     <record id="disease_demo_asthma" model="hr.hospital.disease">
         <field name="name">Asthma</field>
         <field name="parent_id" ref="disease_demo_respiratory"/>
     </record>
-
     <record id="disease_demo_neurological" model="hr.hospital.disease">
         <field name="name">Neurological Diseases</field>
     </record>
-
     <record id="disease_demo_neuralgia" model="hr.hospital.disease">
         <field name="name">Neuralgia</field>
         <field name="parent_id" ref="disease_demo_neurological"/>
     </record>
-
     <record id="disease_demo_epilepsy" model="hr.hospital.disease">
         <field name="name">Epilepsy</field>
         <field name="parent_id" ref="disease_demo_neurological"/>

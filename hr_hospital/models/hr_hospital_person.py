@@ -1,4 +1,3 @@
-
 from odoo import fields, models
 
 
@@ -7,9 +6,9 @@ class HrHospitalPerson(models.AbstractModel):
     _description = "Hospital Person"
 
     name = fields.Char(required=True)
-    first_name = fields.Char(string="First Name")
-    last_name = fields.Char(string="Last Name")
-    phone = fields.Char(string="Phone")
+    first_name = fields.Char()
+    last_name = fields.Char()
+    phone = fields.Char()
     image_1920 = fields.Image(string="Photo")
     gender = fields.Selection(
         selection=[
@@ -17,5 +16,4 @@ class HrHospitalPerson(models.AbstractModel):
             ("female", "Female"),
             ("other", "Other"),
         ],
-        string="Gender",
     )

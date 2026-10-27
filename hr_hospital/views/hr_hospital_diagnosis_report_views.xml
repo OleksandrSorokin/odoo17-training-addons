@@ -4,8 +4,9 @@
         <field name="name">hr.hospital.diagnosis.report.tree</field>
         <field name="model">hr.hospital.diagnosis</field>
         <field name="arch" type="xml">
-            <tree string="Diagnoses">
+            <tree>
                 <field name="disease_id"/>
+                <field name="disease_type_id"/>
                 <field name="visit_date"/>
                 <field name="doctor_id"/>
                 <field name="patient_id"/>
@@ -14,7 +15,6 @@
             </tree>
         </field>
     </record>
-
     <record id="hr_hospital_diagnosis_report_view_form" model="ir.ui.view">
         <field name="name">hr.hospital.diagnosis.report.form</field>
         <field name="model">hr.hospital.diagnosis</field>
@@ -23,6 +23,7 @@
                 <sheet>
                     <group>
                         <field name="disease_id"/>
+                        <field name="disease_type_id" readonly="1"/>
                         <field name="visit_id" readonly="1"/>
                         <field name="visit_date" readonly="1"/>
                         <field name="doctor_id" readonly="1"/>
@@ -36,20 +37,49 @@
             </form>
         </field>
     </record>
-
     <record id="hr_hospital_diagnosis_report_view_search" model="ir.ui.view">
         <field name="name">hr.hospital.diagnosis.report.search</field>
         <field name="model">hr.hospital.diagnosis</field>
         <field name="arch" type="xml">
-            <search string="Diagnosis Report">
+            <search>
                 <field name="disease_id"/>
+                <field name="disease_type_id"/>
                 <field name="doctor_id"/>
                 <field name="patient_id"/>
+                <field name="visit_date"/>
                 <group expand="0" string="Group By">
-                    <filter name="group_by_disease" string="Disease"
-                            context="{'group_by': 'disease_id'}"/>
+                    <filter name="group_by_disease" string="Disease" context="{'group_by': 'disease_id'}"/>
+                    <filter name="group_by_disease_type" string="Disease Type" context="{'group_by': 'disease_type_id'}"/>
+                    <filter name="group_by_month" string="Month" context="{'group_by': 'visit_date:month'}"/>
                 </group>
             </search>
         </field>
+    </record>
+    <record id="hr_hospital_diagnosis_view_pivot" model="ir.ui.view">
+        <field name="name">hr.hospital.diagnosis.view.pivot</field>
+        <field name="model">hr.hospital.diagnosis</field>
+        <field name="arch" type="xml">
+            <pivot string="Diagnoses by Disease and Month" display_quantity="1">
+                <field name="disease_type_id" type="row"/>
+                <field name="disease_id" type="row"/>
+                <field name="visit_date" type="col" interval="month"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="hr_hospital_diagnosis_view_graph" model="ir.ui.view">
+        <field name="name">hr.hospital.diagnosis.view.graph</field>
+        <field name="model">hr.hospital.diagnosis</field>
+        <field name="arch" type="xml">
+            <graph string="Diseases by Type and Month" type="bar" stacked="1">
+                <field name="visit_date" type="row" interval="month"/>
+                <field name="disease_type_id" type="col"/>
+            </graph>
+        </field>
+    </record>
+    <record id="hr_hospital_diagnosis_action" model="ir.actions.act_window">
+        <field name="name">Diagnoses</field>
+        <field name="res_model">hr.hospital.diagnosis</field>
+        <field name="view_mode">tree,pivot,graph,form</field>
+        <field name="search_view_id" ref="hr_hospital_diagnosis_report_view_search"/>
     </record>
 </odoo>

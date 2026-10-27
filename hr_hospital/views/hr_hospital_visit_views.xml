@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="hr_hospital_visit_view_tree" model="ir.ui.view">
         <field name="name">hr.hospital.visit.view.tree</field>
@@ -8,7 +8,9 @@
                 <field name="visit_date"/>
                 <field name="patient_id"/>
                 <field name="doctor_id"/>
-            <field name="state"/><field name="actual_visit_date"/></tree>
+                <field name="state"/>
+                <field name="actual_visit_date"/>
+            </tree>
         </field>
     </record>
 
@@ -17,15 +19,22 @@
         <field name="model">hr.hospital.visit</field>
         <field name="arch" type="xml">
             <form string="Visit">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="planned,done,cancelled"/>
+                </header>
                 <sheet>
-                <group>
-                    <field name="active" invisible="1"/>
-                    <field name="state"/>
-                    <field name="visit_date" readonly="state == 'done'"/>
-                    <field name="actual_visit_date" required="state == 'done'"/>
-                    <field name="patient_id"/>
-                    <field name="doctor_id" readonly="state == 'done'"/>
-                </group>
+                    <group>
+                        <group string="Appointment">
+                            <field name="active" invisible="1"/>
+                            <field name="patient_id"/>
+                            <field name="doctor_id" readonly="state == 'done'"/>
+                            <field name="visit_date" readonly="state == 'done'"/>
+                            <field name="actual_visit_date" required="state == 'done'"/>
+                        </group>
+                        <group string="Other Details">
+                            <field name="disease_id"/>
+                        </group>
+                    </group>
                     <notebook>
                         <page string="Diagnoses">
                             <field name="diagnosis_ids">
@@ -36,11 +45,13 @@
                                     <field name="is_approved" readonly="1"/>
                                     <field name="approved_by_id" readonly="1"/>
                                     <field name="approved_at" readonly="1"/>
-                                    <button name="action_approve" type="object" string="Approve" class="btn-primary" invisible="is_approved or not doctor_is_intern"/>
-                                    </tree>
+                                    <button name="action_approve" type="object" string="Approve"
+                                            class="btn-primary" invisible="is_approved or not doctor_is_intern"/>
+                                </tree>
                                 <form string="Diagnosis">
                                     <header>
-                                        <button name="action_approve" type="object" string="Approve" class="btn-primary" invisible="is_approved or not doctor_is_intern"/>
+                                        <button name="action_approve" type="object" string="Approve"
+                                                class="btn-primary" invisible="is_approved or not doctor_is_intern"/>
                                     </header>
                                     <sheet>
                                         <group>
@@ -61,9 +72,62 @@
         </field>
     </record>
 
+    <record id="hr_hospital_visit_view_calendar" model="ir.ui.view">
+        <field name="name">hr.hospital.visit.view.calendar</field>
+        <field name="model">hr.hospital.visit</field>
+        <field name="arch" type="xml">
+            <calendar string="Visits Calendar" date_start="visit_date" color="doctor_id"
+                      mode="month" quick_create="false">
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="hr_hospital_visit_view_search" model="ir.ui.view">
+        <field name="name">hr.hospital.visit.view.search</field>
+        <field name="model">hr.hospital.visit</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="state"/>
+                <filter name="visit_current_month" string="This Month"
+                        date="visit_date" default_period="this_month"/>
+                <group expand="0" string="Group By">
+                    <filter name="visit_group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="visit_group_doctor" string="Doctor"
+                            context="{'group_by': 'doctor_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="hr_hospital_visit_view_pivot" model="ir.ui.view">
+        <field name="name">hr.hospital.visit.view.pivot</field>
+        <field name="model">hr.hospital.visit</field>
+        <field name="arch" type="xml">
+            <pivot string="Visits by Doctor and Status" display_quantity="1">
+                <field name="doctor_id" type="row"/>
+                <field name="state" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
     <record id="hr_hospital_visit_action" model="ir.actions.act_window">
         <field name="name">Visits</field>
         <field name="res_model">hr.hospital.visit</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,calendar,form,pivot</field>
+        <field name="search_view_id" ref="hr_hospital_visit_view_search"/>
+    </record>
+
+    <record id="hr_hospital_visit_stats_action" model="ir.actions.act_window">
+        <field name="name">Visit Statistics (This Month)</field>
+        <field name="res_model">hr.hospital.visit</field>
+        <field name="view_mode">pivot,tree,form</field>
+        <field name="search_view_id" ref="hr_hospital_visit_view_search"/>
+        <field name="context">{'search_default_visit_current_month': 1}</field>
     </record>
 </odoo>

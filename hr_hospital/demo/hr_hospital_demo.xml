@@ -2,26 +2,26 @@
 <odoo>
     <record id="hr_hospital_doctor_demo_1" model="hr.hospital.doctor">
         <field name="name">John Smith</field>
+        <field name="specialty">family</field>
     </record>
-
     <record id="hr_hospital_doctor_demo_2" model="hr.hospital.doctor">
         <field name="name">Anna Brown</field>
+        <field name="specialty">neurology</field>
     </record>
-
     <record id="hr_hospital_doctor_demo_3" model="hr.hospital.doctor">
         <field name="name">Michael Wilson</field>
+        <field name="specialty">family</field>
+        <field name="is_intern" eval="True"/>
+        <field name="mentor_id" ref="hr_hospital_doctor_demo_1"/>
     </record>
-
     <record id="hr_hospital_patient_demo_1" model="hr.hospital.patient">
         <field name="name">Robert Taylor</field>
         <field name="doctor_id" ref="hr_hospital_doctor_demo_1"/>
     </record>
-
     <record id="hr_hospital_patient_demo_2" model="hr.hospital.patient">
         <field name="name">Emily Davis</field>
         <field name="doctor_id" ref="hr_hospital_doctor_demo_2"/>
     </record>
-
     <record id="hr_hospital_patient_demo_3" model="hr.hospital.patient">
         <field name="name">Daniel Moore</field>
         <field name="doctor_id" ref="hr_hospital_doctor_demo_3"/>

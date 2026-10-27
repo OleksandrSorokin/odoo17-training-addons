@@ -1,7 +1,7 @@
 {
     "name": "Hospital",
     "summary": "Hospital management",
-    "version": "17.0.1.0.0",
+    "version": "17.0.1.1.2",
     "category": "Human Resources",
     "author": "Oleksandr Sorokin",
     "license": "LGPL-3",
@@ -20,10 +20,11 @@
         "wizard/hr_hospital_wizard_views.xml",
         "views/hr_hospital_menu.xml",
     ],
-        "demo": [
+    "demo": [
         "demo/hr_hospital_demo.xml",
         "demo/hr_hospital_visit_demo.xml",
         "demo/hr_hospital_disease_hierarchy_demo.xml",
+        "demo/hr_hospital_module4_demo.xml",
     ],
     "application": True,
     "installable": True,

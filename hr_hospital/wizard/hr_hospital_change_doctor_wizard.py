@@ -25,7 +25,6 @@ class HrHospitalChangeDoctorWizard(models.TransientModel):
             raise UserError(_("Select at least one patient."))
         if not self.doctor_id:
             raise UserError(_("Select the new personal doctor."))
-
         patients.write({"doctor_id": self.doctor_id.id})
         return {
             "type": "ir.actions.act_window",

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_hospital_intern_demo_1" model="hr.hospital.doctor">
+        <field name="name">Olivia Carter</field>
+        <field name="specialty">family</field>
+        <field name="is_intern" eval="True"/>
+        <field name="mentor_id" ref="hr_hospital_doctor_demo_1"/>
+    </record>
+    <record id="hr_hospital_intern_demo_2" model="hr.hospital.doctor">
+        <field name="name">Noah Evans</field>
+        <field name="specialty">neurology</field>
+        <field name="is_intern" eval="True"/>
+        <field name="mentor_id" ref="hr_hospital_doctor_demo_2"/>
+    </record>
+    <record id="hr_hospital_visit_demo_6" model="hr.hospital.visit">
+        <field name="patient_id" ref="hr_hospital_patient_demo_1"/>
+        <field name="doctor_id" ref="hr_hospital_intern_demo_1"/>
+        <field name="visit_date">2026-10-27 10:00:00</field>
+        <field name="disease_id" ref="disease_demo_bronchitis"/>
+    </record>
+    <record id="hr_hospital_visit_demo_7" model="hr.hospital.visit">
+        <field name="patient_id" ref="hr_hospital_patient_demo_2"/>
+        <field name="doctor_id" ref="hr_hospital_intern_demo_2"/>
+        <field name="visit_date">2026-10-28 13:00:00</field>
+        <field name="disease_id" ref="disease_demo_neuralgia"/>
+    </record>
+    <record id="hr_hospital_visit_demo_8" model="hr.hospital.visit">
+        <field name="patient_id" ref="hr_hospital_patient_demo_3"/>
+        <field name="doctor_id" ref="hr_hospital_doctor_demo_1"/>
+        <field name="visit_date">2026-10-29 14:00:00</field>
+        <field name="disease_id" ref="disease_demo_asthma"/>
+    </record>
+    <record id="hr_hospital_visit_demo_9" model="hr.hospital.visit">
+        <field name="patient_id" ref="hr_hospital_patient_demo_1"/>
+        <field name="doctor_id" ref="hr_hospital_doctor_demo_3"/>
+        <field name="visit_date">2026-10-30 16:00:00</field>
+        <field name="state">cancelled</field>
+        <field name="disease_id" ref="disease_demo_epilepsy"/>
+    </record>
+    <record id="hr_hospital_diagnosis_demo_8" model="hr.hospital.diagnosis">
+        <field name="visit_id" ref="hr_hospital_visit_demo_6"/>
+        <field name="disease_id" ref="disease_demo_bronchitis"/>
+        <field name="treatment_description">Observe symptoms and hydration.</field>
+    </record>
+    <record id="hr_hospital_diagnosis_demo_9" model="hr.hospital.diagnosis">
+        <field name="visit_id" ref="hr_hospital_visit_demo_6"/>
+        <field name="disease_id" ref="disease_demo_asthma"/>
+        <field name="treatment_description">Review pulmonary function tests.</field>
+    </record>
+    <record id="hr_hospital_diagnosis_demo_10" model="hr.hospital.diagnosis">
+        <field name="visit_id" ref="hr_hospital_visit_demo_7"/>
+        <field name="disease_id" ref="disease_demo_neuralgia"/>
+        <field name="treatment_description">Evaluate neurological symptoms.</field>
+    </record>
+    <record id="hr_hospital_diagnosis_demo_11" model="hr.hospital.diagnosis">
+        <field name="visit_id" ref="hr_hospital_visit_demo_8"/>
+        <field name="disease_id" ref="disease_demo_asthma"/>
+        <field name="treatment_description">Recommend follow-up examination.</field>
+    </record>
+    <record id="hr_hospital_diagnosis_demo_12" model="hr.hospital.diagnosis">
+        <field name="visit_id" ref="hr_hospital_visit_demo_8"/>
+        <field name="disease_id" ref="disease_demo_bronchitis"/>
+        <field name="treatment_description">Monitor respiratory symptoms.</field>
+    </record>
+    <record id="hr_hospital_diagnosis_demo_13" model="hr.hospital.diagnosis">
+        <field name="visit_id" ref="hr_hospital_visit_demo_7"/>
+        <field name="disease_id" ref="disease_demo_epilepsy"/>
+        <field name="treatment_description">Document referral for reassessment.</field>
+    </record>
+</odoo>
