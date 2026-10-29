@@ -5,3 +5,4 @@ from . import hr_hospital_disease
 from . import hr_hospital_visit
 from . import hr_hospital_diagnosis
 from . import hr_hospital_diagnosis_report
+from . import hr_hospital_doctor_print

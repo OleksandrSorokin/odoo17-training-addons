@@ -21,6 +21,8 @@
                 <header>
                     <button name="action_schedule_visit" type="object"
                             string="Schedule Visit" class="btn-primary"/>
+                    <button name="action_print_doctor_report" type="object"
+                            string="Print PDF"/>
                 </header>
                 <sheet>
                     <field name="image_1920" widget="image" class="oe_avatar"/>
@@ -77,16 +79,30 @@
                 <field name="specialty"/>
                 <field name="phone"/>
                 <field name="is_intern"/>
+                <field name="intern_names"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click o_kanban_record p-3">
                             <strong><field name="name"/></strong>
                             <div><field name="specialty"/></div>
-                            <div><field name="phone"/></div>
                             <div t-if="record.is_intern.raw_value" class="text-muted">Intern</div>
-                            <button name="action_schedule_visit" type="object"
-                                    class="btn btn-primary mt-2">Schedule Visit</button>
+                            <div t-if="record.intern_names.raw_value" class="mt-2">
+                                <strong>Interns:</strong>
+                                <div style="white-space: pre-line;"><field name="intern_names"/></div>
+                            </div>
+                            <div class="mt-2">
+                                <button name="action_schedule_visit" type="object"
+                                        class="btn btn-primary btn-sm">Schedule Visit</button>
+                                <button name="action_print_doctor_report" type="object"
+                                        class="btn btn-secondary btn-sm">Print PDF</button>
+                            </div>
                         </div>
+                    </t>
+                    <t t-name="kanban-menu">
+                        <a t-if="widget.editable" type="edit"
+                           class="dropdown-item" role="menuitem">Edit</a>
+                        <a t-if="widget.deletable" type="delete"
+                           class="dropdown-item" role="menuitem">Delete</a>
                     </t>
                 </templates>
             </kanban>
