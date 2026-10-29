@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="hr_hospital_doctor_external_layout"
+              inherit_id="web.external_layout_standard" primary="True">
+        <xpath expr="//div[contains(@t-attf-class, 'footer')]" position="inside">
+            <div class="text-center small mt-1">
+                <span>Дата друку:</span>
+                <span t-out="printed_at"/>
+                <span class="mx-2">|</span>
+                <span>Місто:</span>
+                <span t-out="company.city or company.partner_id.city or 'Не вказано'"/>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="hr_hospital_doctor_report_template">
+        <t t-call="web.html_container">
+            <t t-foreach="reports" t-as="entry">
+                <t t-set="o" t-value="entry['doctor']"/>
+                <t t-set="company" t-value="res_company"/>
+                <t t-call="hr_hospital.hr_hospital_doctor_external_layout">
+                    <div class="page">
+                        <style type="text/css">
+                            .hospital-report th, .hospital-report td {
+                                border: 1px solid #d9e1e8;
+                                padding: 6px;
+                                vertical-align: top;
+                            }
+                            .hospital-report th { background-color: #eef2f6; }
+                            .hospital-report .status {
+                                display: inline-block;
+                                padding: 3px 8px;
+                                border-radius: 4px;
+                                font-weight: bold;
+                                color: #222;
+                            }
+                            .hospital-report .planned { background-color: #ffe08a; }
+                            .hospital-report .done { background-color: #a8e2b2; }
+                            .hospital-report .cancelled { background-color: #ffb6b6; }
+                            .hospital-report thead { display: table-header-group; }
+                            .hospital-report tr { page-break-inside: avoid; }
+                        </style>
+                        <h2>Звіт лікаря: <span t-field="o.name"/></h2>
+                        <p>
+                            <strong>Спеціальність:</strong>
+                            <span t-field="o.specialty"/>
+                        </p>
+
+                        <h3 class="mt-4">Історія візитів</h3>
+                        <table class="table table-sm hospital-report" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Запланована дата</th>
+                                    <th>Пацієнт</th>
+                                    <th>Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="entry['visits']" t-as="visit">
+                                    <td><span t-field="visit.visit_date"/></td>
+                                    <td><span t-field="visit.patient_id"/></td>
+                                    <td><span t-field="visit.state"/></td>
+                                </tr>
+                                <tr t-if="not entry['visits']">
+                                    <td colspan="3">Візитів поки немає.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3 class="mt-4">Пацієнти лікаря</h3>
+                        <table class="table table-sm hospital-report" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>ПІБ</th>
+                                    <th>Стать</th>
+                                    <th>Дата народження</th>
+                                    <th>Телефон</th>
+                                    <th>Останній статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="entry['patient_rows']" t-as="row">
+                                    <t t-set="patient" t-value="row['patient']"/>
+                                    <t t-set="visit" t-value="row['last_visit']"/>
+                                    <td><span t-field="patient.name"/></td>
+                                    <td><span t-field="patient.gender"/></td>
+                                    <td><span t-field="patient.birth_date"/></td>
+                                    <td><span t-field="patient.phone"/></td>
+                                    <td>
+                                        <span t-if="visit and visit.state == 'planned'"
+                                              class="status planned">Заплановано</span>
+                                        <span t-elif="visit and visit.state == 'done'"
+                                              class="status done">Завершено</span>
+                                        <span t-elif="visit and visit.state == 'cancelled'"
+                                              class="status cancelled">Скасовано</span>
+                                        <span t-else="">—</span>
+                                    </td>
+                                </tr>
+                                <tr t-if="not entry['patient_rows']">
+                                    <td colspan="5">Немає пацієнтів.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
