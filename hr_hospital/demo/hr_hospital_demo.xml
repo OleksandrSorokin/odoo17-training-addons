@@ -1,29 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<odoo noupdate="1">
     <record id="hr_hospital_doctor_demo_1" model="hr.hospital.doctor">
         <field name="name">John Smith</field>
         <field name="specialty">family</field>
+        <field name="phone">+380 00 000 03 01</field>
     </record>
     <record id="hr_hospital_doctor_demo_2" model="hr.hospital.doctor">
         <field name="name">Anna Brown</field>
         <field name="specialty">neurology</field>
+        <field name="phone">+380 00 000 03 02</field>
     </record>
     <record id="hr_hospital_doctor_demo_3" model="hr.hospital.doctor">
         <field name="name">Michael Wilson</field>
         <field name="specialty">family</field>
+        <field name="phone">+380 00 000 03 03</field>
         <field name="is_intern" eval="True"/>
         <field name="mentor_id" ref="hr_hospital_doctor_demo_1"/>
     </record>
     <record id="hr_hospital_patient_demo_1" model="hr.hospital.patient">
         <field name="name">Robert Taylor</field>
+        <field name="gender">male</field>
+        <field name="birth_date">1985-05-14</field>
+        <field name="phone">+380 00 000 02 01</field>
         <field name="doctor_id" ref="hr_hospital_doctor_demo_1"/>
     </record>
     <record id="hr_hospital_patient_demo_2" model="hr.hospital.patient">
         <field name="name">Emily Davis</field>
+        <field name="gender">female</field>
+        <field name="birth_date">1992-02-23</field>
+        <field name="phone">+380 00 000 02 02</field>
         <field name="doctor_id" ref="hr_hospital_doctor_demo_2"/>
     </record>
     <record id="hr_hospital_patient_demo_3" model="hr.hospital.patient">
         <field name="name">Daniel Moore</field>
+        <field name="gender">male</field>
+        <field name="birth_date">1978-08-09</field>
+        <field name="phone">+380 00 000 02 03</field>
         <field name="doctor_id" ref="hr_hospital_doctor_demo_3"/>
     </record>
 </odoo>

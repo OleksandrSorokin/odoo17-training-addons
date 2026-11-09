@@ -2,6 +2,7 @@ from odoo import api, fields, models
 
 
 class HrHospitalDiagnosisReport(models.Model):
+    """Computed reporting dimensions for diagnoses."""
     _inherit = "hr.hospital.diagnosis"
 
     doctor_id = fields.Many2one(
@@ -33,6 +34,7 @@ class HrHospitalDiagnosisReport(models.Model):
 
     @api.depends("disease_id", "disease_id.parent_id")
     def _compute_disease_type_id(self):
+        """Use a disease parent as its report grouping category."""
         for diagnosis in self:
             diagnosis.disease_type_id = (
                 diagnosis.disease_id.parent_id or diagnosis.disease_id

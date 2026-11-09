@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="hr_hospital_demo_company" model="res.company">
+        <field name="name">Odoo 17 Demo Hospital</field>
+        <field name="street">17 Training Street</field>
+        <field name="street2">Training database only</field>
+        <field name="city">Kyiv</field>
+        <field name="zip">01001</field>
+        <field name="country_id" ref="base.ua"/>
+        <field name="phone">+380 00 000 00 00</field>
+        <field name="email">hospital@example.invalid</field>
+        <field name="website">https://example.com</field>
+        <field name="logo" type="base64" file="hr_hospital/static/description/demo_company_logo.png"/>
+    </record>
+</odoo>

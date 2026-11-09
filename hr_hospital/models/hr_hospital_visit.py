@@ -7,6 +7,8 @@ from odoo.exceptions import UserError, ValidationError
 
 
 class HrHospitalVisit(models.Model):
+    """Appointment with patient/doctor ownership and clinical validations."""
+
     _name = "hr.hospital.visit"
     _description = "Hospital Visit"
 
@@ -25,17 +27,22 @@ class HrHospitalVisit(models.Model):
         string="Scheduled Date",
         required=True,
         default=fields.Datetime.now,
+        index=True,
     )
     actual_visit_date = fields.Datetime()
     patient_id = fields.Many2one(
         comodel_name="hr.hospital.patient",
         string="Patient",
         required=True,
+        ondelete="restrict",
+        index=True,
     )
     doctor_id = fields.Many2one(
         comodel_name="hr.hospital.doctor",
         string="Doctor",
         required=True,
+        ondelete="restrict",
+        index=True,
     )
     disease_id = fields.Many2one(
         comodel_name="hr.hospital.disease",
@@ -49,14 +56,16 @@ class HrHospitalVisit(models.Model):
 
     @api.depends("patient_id.name", "doctor_id.name")
     def _compute_display_name(self):
+        """Build a readable caption for visit selectors and calendar views."""
         for visit in self:
             visit.display_name = " | ".join(filter(None, [
                 visit.patient_id.name,
                 visit.doctor_id.name,
-            ])) or "New Visit"
+            ])) or _("New Visit")
 
     @api.constrains("state", "actual_visit_date")
     def _check_actual_date(self):
+        """Allow an actual visit date only on completed appointments."""
         for visit in self:
             if visit.state == "done" and not visit.actual_visit_date:
                 raise ValidationError(
@@ -69,18 +78,15 @@ class HrHospitalVisit(models.Model):
 
     @api.constrains("patient_id", "doctor_id", "visit_date", "state", "active")
     def _check_duplicate_visit(self):
+        """Disallow the same doctor/patient pair twice per clinic-local day."""
+        timezone_name = self.env.company.partner_id.tz or "UTC"
+        clinic_tz = pytz.timezone(timezone_name)
         for visit in self:
             if not visit.active or visit.state == "cancelled":
                 continue
-            if (
-                not visit.patient_id
-                or not visit.doctor_id
-                or not visit.visit_date
-            ):
+            if not (visit.patient_id and visit.doctor_id and visit.visit_date):
                 continue
 
-            timezone_name = self.env.company.partner_id.tz or "UTC"
-            clinic_tz = pytz.timezone(timezone_name)
             visit_utc = pytz.UTC.localize(
                 fields.Datetime.to_datetime(visit.visit_date)
             )
@@ -104,35 +110,40 @@ class HrHospitalVisit(models.Model):
                 ("visit_date", "<", end_utc),
             ])
             if duplicate:
-                raise ValidationError(
-                    _(
-                        "This patient already has an appointment "
-                        "with this doctor on the selected day."
-                    )
-                )
+                raise ValidationError(_(
+                    "This patient already has an appointment "
+                    "with this doctor on the selected day."
+                ))
 
     def write(self, vals):
+        """Protect completed visits and diagnosed appointments."""
         protected_fields = {
             "state", "visit_date", "actual_visit_date", "doctor_id"
         }
-        if protected_fields.intersection(vals):
-            if any(visit.state == "done" for visit in self):
-                raise UserError(
-                    _(
-                        "You cannot change the date, doctor or status "
-                        "of a completed visit."
-                    )
-                )
-        if vals.get("active") is False:
-            if any(visit.diagnosis_ids for visit in self):
-                raise UserError(
-                    _("You cannot archive a visit that has diagnoses.")
-                )
+        if protected_fields.intersection(vals) and any(
+            visit.state == "done" for visit in self
+        ):
+            raise UserError(_(
+                "You cannot change the date, doctor or status "
+                "of a completed visit."
+            ))
+        if vals.get("active") is False and any(
+            visit.diagnosis_ids for visit in self
+        ):
+            raise UserError(
+                _("You cannot archive a visit that has diagnoses.")
+            )
         return super().write(vals)
 
     def unlink(self):
+        """Let hospital administrators remove diagnosed visits explicitly."""
         if any(visit.diagnosis_ids for visit in self):
-            raise UserError(
-                _("You cannot delete a visit that has diagnoses.")
-            )
+            if not (
+                self.env.is_superuser()
+                or self.env.user.has_group("hr_hospital.group_hospital_admin")
+            ):
+                raise UserError(
+                    _("You cannot delete a visit that has diagnoses.")
+                )
+            self.mapped("diagnosis_ids").unlink()
         return super().unlink()

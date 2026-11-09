@@ -1,3 +1,9 @@
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.pylint.d/
+.coverage
+htmlcov/
+.idea/
+.DS_Store
 *:Zone.Identifier

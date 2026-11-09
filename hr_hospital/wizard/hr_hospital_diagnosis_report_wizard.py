@@ -8,6 +8,7 @@ from odoo.exceptions import ValidationError
 
 
 class HrHospitalDiagnosisReportWizard(models.TransientModel):
+    """Choose dates, clinicians and diseases for the report."""
     _name = "hr.hospital.diagnosis.report.wizard"
     _description = "Diagnosis Report Wizard"
 
@@ -32,12 +33,14 @@ class HrHospitalDiagnosisReportWizard(models.TransientModel):
 
     @api.model
     def _default_date_to(self):
+        """Return the last calendar day of the current month."""
         today = fields.Date.context_today(self)
         last_day = calendar.monthrange(today.year, today.month)[1]
         return today.replace(day=last_day)
 
     @api.constrains("date_from", "date_to")
     def _check_dates(self):
+        """Validate report date boundaries."""
         for wizard in self:
             if (
                 wizard.date_from and wizard.date_to
@@ -48,6 +51,7 @@ class HrHospitalDiagnosisReportWizard(models.TransientModel):
                 )
 
     def action_show_report(self):
+        """Open the filtered analytical diagnosis report."""
         self.ensure_one()
         if self.date_from > self.date_to:
             raise ValidationError(_("Date From cannot be later than Date To."))
