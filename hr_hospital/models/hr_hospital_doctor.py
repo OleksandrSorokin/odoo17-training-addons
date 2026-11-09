@@ -3,6 +3,7 @@ from odoo.exceptions import ValidationError
 
 
 class HrHospitalDoctor(models.Model):
+    """Clinician or intern with an optional supervising mentor."""
     _name = "hr.hospital.doctor"
     _inherit = "hr.hospital.person"
     _description = "Hospital Doctor"
@@ -46,6 +47,7 @@ class HrHospitalDoctor(models.Model):
 
     @api.constrains("is_intern", "mentor_id")
     def _check_mentor(self):
+        """Keep the mentor hierarchy consistent and non-recursive."""
         for doctor in self:
             if doctor.mentor_id:
                 if not doctor.is_intern:
@@ -68,6 +70,7 @@ class HrHospitalDoctor(models.Model):
                 )
 
     def action_schedule_visit(self):
+        """Open a new visit with the selected doctor."""
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",

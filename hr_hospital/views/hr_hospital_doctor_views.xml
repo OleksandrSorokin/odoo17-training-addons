@@ -19,9 +19,9 @@
         <field name="arch" type="xml">
             <form string="Doctor">
                 <header>
-                    <button name="action_schedule_visit" type="object"
+                    <button name="action_schedule_visit" type="object" groups="hr_hospital.group_hospital_intern"
                             string="Schedule Visit" class="btn-primary"/>
-                    <button name="action_print_doctor_report" type="object"
+                    <button name="action_print_doctor_report" type="object" groups="hr_hospital.group_hospital_doctor"
                             string="Print PDF"/>
                 </header>
                 <sheet>
@@ -80,6 +80,7 @@
                 <field name="phone"/>
                 <field name="is_intern"/>
                 <field name="intern_names"/>
+                <field name="intern_heading"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click o_kanban_record p-3">
@@ -87,13 +88,13 @@
                             <div><field name="specialty"/></div>
                             <div t-if="record.is_intern.raw_value" class="text-muted">Intern</div>
                             <div t-if="record.intern_names.raw_value" class="mt-2">
-                                <strong>Interns:</strong>
+                                <strong><field name="intern_heading"/></strong>
                                 <div style="white-space: pre-line;"><field name="intern_names"/></div>
                             </div>
                             <div class="mt-2">
-                                <button name="action_schedule_visit" type="object"
+                                <button name="action_schedule_visit" type="object" groups="hr_hospital.group_hospital_intern"
                                         class="btn btn-primary btn-sm">Schedule Visit</button>
-                                <button name="action_print_doctor_report" type="object"
+                                <button name="action_print_doctor_report" type="object" groups="hr_hospital.group_hospital_doctor"
                                         class="btn btn-secondary btn-sm">Print PDF</button>
                             </div>
                         </div>

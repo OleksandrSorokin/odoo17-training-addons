@@ -1,26 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
-    <template id="hr_hospital_doctor_external_layout"
-              inherit_id="web.external_layout_standard" primary="True">
+    <template id="hr_hospital_doctor_external_layout" inherit_id="web.external_layout_standard" primary="True">
         <xpath expr="//div[contains(@t-attf-class, 'footer')]" position="inside">
             <div class="text-center small mt-1">
-                <span>Дата друку:</span>
-                <span t-out="printed_at"/>
+                <span t-out="('Дата друку:' if user.lang == 'uk_UA' else 'Printed at:')"/>
+                <span t-out="printed_at" />
                 <span class="mx-2">|</span>
-                <span>Місто:</span>
-                <span t-out="company.city or company.partner_id.city or 'Не вказано'"/>
+                <span t-out="('Місто:' if user.lang == 'uk_UA' else 'City:')"/>
+                <span t-out="company.city or company.partner_id.city or 'Not specified'" />
             </div>
         </xpath>
     </template>
-
     <template id="hr_hospital_doctor_report_template">
         <t t-call="web.html_container">
             <t t-foreach="reports" t-as="entry">
-                <t t-set="o" t-value="entry['doctor']"/>
-                <t t-set="company" t-value="res_company"/>
-                <t t-call="hr_hospital.hr_hospital_doctor_external_layout">
-                    <div class="page">
-                        <style type="text/css">
+                <t t-call="hr_hospital.hr_hospital_doctor_report_document" t-lang="user.lang or 'en_US'" />
+            </t>
+        </t>
+    </template>
+    <template id="hr_hospital_doctor_report_document">
+        <t t-set="o" t-value="entry['doctor'].with_context(lang=user.lang or 'en_US')" />
+        <t t-set="company" t-value="res_company" />
+        <t t-call="hr_hospital.hr_hospital_doctor_external_layout">
+            <div class="page">
+                <style type="text/css">
                             .hospital-report th, .hospital-report td {
                                 border: 1px solid #d9e1e8;
                                 padding: 6px;
@@ -40,70 +43,79 @@
                             .hospital-report thead { display: table-header-group; }
                             .hospital-report tr { page-break-inside: avoid; }
                         </style>
-                        <h2>Звіт лікаря: <span t-field="o.name"/></h2>
-                        <p>
-                            <strong>Спеціальність:</strong>
-                            <span t-field="o.specialty"/>
-                        </p>
-
-                        <h3 class="mt-4">Історія візитів</h3>
-                        <table class="table table-sm hospital-report" style="width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th>Запланована дата</th>
-                                    <th>Пацієнт</th>
-                                    <th>Статус</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr t-foreach="entry['visits']" t-as="visit">
-                                    <td><span t-field="visit.visit_date"/></td>
-                                    <td><span t-field="visit.patient_id"/></td>
-                                    <td><span t-field="visit.state"/></td>
-                                </tr>
-                                <tr t-if="not entry['visits']">
-                                    <td colspan="3">Візитів поки немає.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <h3 class="mt-4">Пацієнти лікаря</h3>
-                        <table class="table table-sm hospital-report" style="width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th>ПІБ</th>
-                                    <th>Стать</th>
-                                    <th>Дата народження</th>
-                                    <th>Телефон</th>
-                                    <th>Останній статус</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr t-foreach="entry['patient_rows']" t-as="row">
-                                    <t t-set="patient" t-value="row['patient']"/>
-                                    <t t-set="visit" t-value="row['last_visit']"/>
-                                    <td><span t-field="patient.name"/></td>
-                                    <td><span t-field="patient.gender"/></td>
-                                    <td><span t-field="patient.birth_date"/></td>
-                                    <td><span t-field="patient.phone"/></td>
-                                    <td>
-                                        <span t-if="visit and visit.state == 'planned'"
-                                              class="status planned">Заплановано</span>
-                                        <span t-elif="visit and visit.state == 'done'"
-                                              class="status done">Завершено</span>
-                                        <span t-elif="visit and visit.state == 'cancelled'"
-                                              class="status cancelled">Скасовано</span>
-                                        <span t-else="">—</span>
-                                    </td>
-                                </tr>
-                                <tr t-if="not entry['patient_rows']">
-                                    <td colspan="5">Немає пацієнтів.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </t>
-            </t>
+                <h2>Doctor Report: <span t-field="o.name" />
+                </h2>
+                <p>
+                    <strong t-out="('Спеціальність:' if user.lang == 'uk_UA' else 'Specialty:')"/>
+                    <span t-field="o.specialty" />
+                </p>
+                <h3 class="mt-4">Visit History</h3>
+                <table class="table table-sm hospital-report" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Scheduled Date</th>
+                            <th>Patient</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="entry['visits']" t-as="visit">
+                            <t t-set="visit" t-value="visit.with_context(lang=user.lang or 'en_US')" />
+                            <td>
+                                <span t-field="visit.visit_date" />
+                            </td>
+                            <td>
+                                <span t-field="visit.patient_id" />
+                            </td>
+                            <td>
+                                <span t-field="visit.state" />
+                            </td>
+                        </tr>
+                        <tr t-if="not entry['visits']">
+                            <td colspan="3">No visits yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3 class="mt-4">Doctor Patients</h3>
+                <table class="table table-sm hospital-report" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Gender</th>
+                            <th>Birth Date</th>
+                            <th>Phone</th>
+                            <th>Latest Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="entry['patient_rows']" t-as="row">
+                            <t t-set="patient" t-value="row['patient'].with_context(lang=user.lang or 'en_US')" />
+                            <t t-set="visit" t-value="row['last_visit']" />
+                            <td>
+                                <span t-field="patient.name" />
+                            </td>
+                            <td>
+                                <span t-field="patient.gender" />
+                            </td>
+                            <td>
+                                <span t-field="patient.birth_date" />
+                            </td>
+                            <td>
+                                <span t-field="patient.phone" />
+                            </td>
+                            <td>
+                                <span t-if="visit and visit.state == 'planned'" class="status planned">Planned</span>
+                                <span t-elif="visit and visit.state == 'done'" class="status done">Completed</span>
+                                <span t-elif="visit and visit.state == 'cancelled'" class="status cancelled">Cancelled</span>
+                                <span t-else="">—</span>
+                            </td>
+                        </tr>
+                        <tr t-if="not entry['patient_rows']">
+                            <td colspan="5">No patients.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </t>
     </template>
 </odoo>

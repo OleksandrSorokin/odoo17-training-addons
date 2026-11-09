@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="rule_hospital_visit_patient" model="ir.rule">
+        <field name="name">Hospital: patient sees own visits</field>
+        <field name="model_id" ref="model_hr_hospital_visit"/>
+        <field name="groups" eval="[(4, ref('group_hospital_patient'))]"/>
+        <field name="domain_force">[('patient_id.user_id', '=', user.id)] if not user.has_group('hr_hospital.group_hospital_intern') else [('id', '=', 0)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_hospital_visit_intern" model="ir.rule">
+        <field name="name">Hospital: clinician sees own visits</field>
+        <field name="model_id" ref="model_hr_hospital_visit"/>
+        <field name="groups" eval="[(4, ref('group_hospital_intern'))]"/>
+        <field name="domain_force">[('doctor_id.user_id', '=', user.id)]</field>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_hospital_visit_doctor" model="ir.rule">
+        <field name="name">Hospital: doctor sees own and interns' visits</field>
+        <field name="model_id" ref="model_hr_hospital_visit"/>
+        <field name="groups" eval="[(4, ref('group_hospital_doctor'))]"/>
+        <field name="domain_force">['|', ('doctor_id.user_id', '=', user.id), ('doctor_id.mentor_id.user_id', '=', user.id)]</field>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_hospital_visit_manager" model="ir.rule">
+        <field name="name">Hospital: manager reads all visits</field>
+        <field name="model_id" ref="model_hr_hospital_visit"/>
+        <field name="groups" eval="[(4, ref('group_hospital_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_hospital_visit_admin" model="ir.rule">
+        <field name="name">Hospital: administrator full visit access</field>
+        <field name="model_id" ref="model_hr_hospital_visit"/>
+        <field name="groups" eval="[(4, ref('group_hospital_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_hospital_patient_self" model="ir.rule">
+        <field name="name">Hospital: patient sees own profile</field>
+        <field name="model_id" ref="model_hr_hospital_patient"/>
+        <field name="groups" eval="[(4, ref('group_hospital_patient'))]"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_hospital_patient_staff" model="ir.rule">
+        <field name="name">Hospital: clinicians see patient profiles</field>
+        <field name="model_id" ref="model_hr_hospital_patient"/>
+        <field name="groups" eval="[(4, ref('group_hospital_intern'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_hospital_patient_admin" model="ir.rule">
+        <field name="name">Hospital: administrator manages patient profiles</field>
+        <field name="model_id" ref="model_hr_hospital_patient"/>
+        <field name="groups" eval="[(4, ref('group_hospital_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_hospital_diagnosis_patient" model="ir.rule">
+        <field name="name">Hospital: patient sees own diagnoses</field>
+        <field name="model_id" ref="model_hr_hospital_diagnosis"/>
+        <field name="groups" eval="[(4, ref('group_hospital_patient'))]"/>
+        <field name="domain_force">[('visit_id.patient_id.user_id', '=', user.id)] if not user.has_group('hr_hospital.group_hospital_intern') else [('id', '=', 0)]</field>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_hospital_diagnosis_intern" model="ir.rule">
+        <field name="name">Hospital: clinician diagnoses</field>
+        <field name="model_id" ref="model_hr_hospital_diagnosis"/>
+        <field name="groups" eval="[(4, ref('group_hospital_intern'))]"/>
+        <field name="domain_force">[('visit_id.doctor_id.user_id', '=', user.id)]</field>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_hospital_diagnosis_doctor" model="ir.rule">
+        <field name="name">Hospital: doctor and mentored diagnoses</field>
+        <field name="model_id" ref="model_hr_hospital_diagnosis"/>
+        <field name="groups" eval="[(4, ref('group_hospital_doctor'))]"/>
+        <field name="domain_force">['|', ('visit_id.doctor_id.user_id', '=', user.id), ('visit_id.doctor_id.mentor_id.user_id', '=', user.id)]</field>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_hospital_diagnosis_manager" model="ir.rule">
+        <field name="name">Hospital: manager reads diagnoses</field>
+        <field name="model_id" ref="model_hr_hospital_diagnosis"/>
+        <field name="groups" eval="[(4, ref('group_hospital_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_hospital_diagnosis_admin" model="ir.rule">
+        <field name="name">Hospital: administrator full diagnosis access</field>
+        <field name="model_id" ref="model_hr_hospital_diagnosis"/>
+        <field name="groups" eval="[(4, ref('group_hospital_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+</odoo>

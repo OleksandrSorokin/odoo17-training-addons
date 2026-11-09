@@ -20,7 +20,7 @@
         <field name="arch" type="xml">
             <form string="Patient">
                 <header>
-                    <button name="action_schedule_visit" type="object"
+                    <button name="action_schedule_visit" type="object" groups="hr_hospital.group_hospital_intern"
                             string="Schedule Visit" class="btn-primary"/>
                     <button name="action_show_visits" type="object" string="Visit History"/>
                 </header>

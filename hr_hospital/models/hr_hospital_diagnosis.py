@@ -3,6 +3,7 @@ from odoo.exceptions import AccessError, UserError
 
 
 class HrHospitalDiagnosis(models.Model):
+    """Disease and treatment attached to a clinical visit."""
     _name = "hr.hospital.diagnosis"
     _description = "Hospital Diagnosis"
     _rec_name = "disease_id"
@@ -40,6 +41,7 @@ class HrHospitalDiagnosis(models.Model):
     )
 
     def _check_mentor_permission(self):
+        """Require the linked supervising mentor account."""
         for diagnosis in self:
             doctor = diagnosis.visit_id.doctor_id
             if not doctor.is_intern:
@@ -58,6 +60,7 @@ class HrHospitalDiagnosis(models.Model):
                 )
 
     def action_approve(self):
+        """Approve intern diagnoses with mentor authorization."""
         for diagnosis in self:
             if diagnosis.is_approved:
                 continue
@@ -71,6 +74,7 @@ class HrHospitalDiagnosis(models.Model):
 
     @api.constrains("is_approved", "visit_id")
     def _check_approved_intern_diagnoses(self):
+        """Prevent unapproved changes to intern diagnosis approvals."""
         for diagnosis in self:
             if diagnosis.is_approved and diagnosis.doctor_is_intern:
                 diagnosis._check_mentor_permission()

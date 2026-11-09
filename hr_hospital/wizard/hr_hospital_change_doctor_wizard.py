@@ -3,6 +3,7 @@ from odoo.exceptions import UserError
 
 
 class HrHospitalChangeDoctorWizard(models.TransientModel):
+    """Bulk update the personal doctor for selected patients."""
     _name = "hr.hospital.change.doctor.wizard"
     _description = "Mass Change of Personal Doctor"
 
@@ -19,6 +20,7 @@ class HrHospitalChangeDoctorWizard(models.TransientModel):
     )
 
     def action_apply(self):
+        """Apply a selected personal doctor to all chosen patients."""
         self.ensure_one()
         patients = self.patient_ids.exists()
         if not patients:
